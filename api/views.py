@@ -12,8 +12,13 @@ from rest_framework.renderers import JSONRenderer
 
 @api_view(['GET'])
 def get_tasks(request):
-    print(request)
-    tasks = list(Task.objects.all().order_by("-created_at").values())
+    print(request.GET)
+    tasks = Task.objects.all().order_by("-created_at")
+    if request.GET.get("done") == "false":
+        tasks = tasks.exclude(is_done=True)
+    elif request.GET.get("done") == "true":
+        tasks = tasks.exclude(is_done=False)
+    tasks = list(tasks.values())
     return JsonResponse({"data": tasks})
 
 
@@ -31,7 +36,9 @@ def add_task(request):
 def delete_task(request):
     print("POST request:", request.data)
     try:
-        Task.objects.get(id=request.data.get("taskId")).delete()
+        task = Task.objects.get(id=request.data.get("taskId"))
+        task.is_done = True
+        task.save()
         return JsonResponse({"status": "success"})
     except Task.DoesNotExist:
         return JsonResponse({"status": "fail"})
