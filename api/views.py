@@ -12,7 +12,6 @@ from rest_framework.renderers import JSONRenderer
 
 @api_view(['GET'])
 def get_tasks(request):
-    print(request.GET)
     tasks = Task.objects.all().order_by("-created_at")
     if request.GET.get("done") == "false":
         tasks = tasks.exclude(is_done=True)
@@ -24,7 +23,6 @@ def get_tasks(request):
 
 @api_view(['POST'])
 def add_task(request):
-    print("POST request:", request.data)
     try:
         Task.objects.create(name=request.data.get("taskName"), importance=request.data.get("priority"))
         return JsonResponse({"status": "success"})
@@ -34,7 +32,6 @@ def add_task(request):
 
 @api_view(['POST'])
 def delete_task(request):
-    print("POST request:", request.data)
     try:
         task = Task.objects.get(id=request.data.get("taskId"))
         task.is_done = True
@@ -42,3 +39,10 @@ def delete_task(request):
         return JsonResponse({"status": "success"})
     except Task.DoesNotExist:
         return JsonResponse({"status": "fail"})
+
+
+@api_view(['POST'])
+def delete_all_tasks(request):
+    tasks = Task.objects.all().exclude(is_done=False)
+    tasks.delete()
+    return JsonResponse({"status": "success"})
