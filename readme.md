@@ -1,4 +1,4 @@
-# Backend for Todo App written in Django
+# Backend for Todo App built in Django
 
 ## Setup
 To run this project:

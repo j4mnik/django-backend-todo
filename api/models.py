@@ -19,6 +19,7 @@ class Task(models.Model):
     name = models.CharField(max_length=255, null=False)
     importance = models.CharField(max_length=25, null=False, default=REGULAR, choices=PRIORITIES)
     created_at = models.DateTimeField(auto_now_add=True, null=False)
+    is_done = models.BooleanField(default=False, null=False)
 
     class Meta:
         db_table = "task"
